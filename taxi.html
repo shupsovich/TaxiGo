@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiGo 🚖</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif;}
+        body {background: linear-gradient(135deg, #0f0f0f, #1e1e1e); color: #fff; display: flex; flex-direction: column; min-height: 100vh; text-align: center;}
+
+        header {background: #111; padding: 20px; font-size: 1.8rem; font-weight: 800; letter-spacing: 1px; color: #ffcc00; box-shadow: 0 4px 20px rgba(0,0,0,0.4);}
+        main {flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; gap: 20px; animation: fadeIn 1s ease forwards;}
+        h1 {font-size: 3rem; font-weight: 800; color: #ffcc00; text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);}
+        p {font-size: 1.2rem; color: #ccc; max-width: 600px;}
+        .btn {display: inline-block; background: #ffcc00; color: #000; font-weight: 700; font-size: 1.2rem; padding: 15px 40px; margin-top: 20px; border-radius: 50px; text-decoration: none; box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease;}
+        .btn:hover {transform: scale(1.05); box-shadow: 0 10px 30px rgba(255, 204, 0, 0.5);}
+        footer {background: #111; padding: 15px; font-size: 0.9rem; color: #888;}
+        @keyframes fadeIn {0% {opacity: 0; transform: translateY(30px);} 100% {opacity: 1; transform: translateY(0);}}
+    </style>
+</head>
+<body>
+    <header>🚖 TaxiGo</header>
+    <main>
+        <h1>Вызови такси за 1 клик</h1>
+        <p>TaxiGo — это самый быстрый способ заказать такси в своём городе. 
+           Надёжные водители, комфортные машины и честные цены.</p>
+        <a href="order.html" class="btn">🚗 Заказать сейчас</a>
+    </main>
+    <footer>© 2025 TaxiGo. Все права защищены.</footer>
+</body>
+</html>

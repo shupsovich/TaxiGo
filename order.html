@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MonoGrad — Кейсы (mini app)</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<style>
+  :root{
+    --bg:#0b0b0b;
+    --panel:#111;
+    --muted:#9a9a9a;
+    --accent:#ffffff;
+    --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.05);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background: linear-gradient(180deg,var(--bg), #060606 120%);
+    color:var(--accent);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .app {
+    width:100%;
+    max-width:980px;
+    display:grid;
+    grid-template-columns: 1fr 420px;
+    gap:24px;
+    align-items:start;
+  }
+
+  /* LEFT: case open area */
+  .case-area{
+    background: linear-gradient(180deg,var(--panel), #0c0c0c);
+    border-radius:16px;
+    padding:24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 1px 0 var(--glass);
+    min-height:420px;
+  }
+
+  .header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .title {
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:1px;
+  }
+  .sub { color:var(--muted); font-size:13px }
+
+  .stage {
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    height:260px;
+    overflow:hidden;
+    border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+    border: 1px solid var(--glass-2);
+  }
+
+  /* spinning strip */
+  .strip {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px;
+    transition: transform 1.2s cubic-bezier(.22,.9,.33,1);
+    will-change: transform;
+  }
+
+  .case-item {
+    min-width:120px;
+    height:160px;
+    border-radius:12px;
+    background:linear-gradient(180deg,#0f0f0f,#141414);
+    border:1px solid rgba(255,255,255,0.02);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    text-align:center;
+  }
+  .star-badge {
+    font-weight:800;
+    font-size:24px;
+  }
+  .item-name { font-size:14px; color:var(--muted) }
+
+  /* selector pointer */
+  .pointer {
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:6px;
+    left:50%;
+    transform:translateX(-50%);
+    pointer-events:none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border-left:1px solid rgba(255,255,255,0.02);
+    border-right:1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 0 30px rgba(255,255,255,0.02);
+  }
+
+  /* controls */
+  .controls{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+    align-items:center;
+  }
+  .btn {
+    background:#fff;color:#000;border-radius:12px;padding:12px 16px;font-weight:700;text-decoration:none;border:none;cursor:pointer;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.secondary{ background:transparent;color:var(--accent);border:1px solid var(--glass-2) }
+
+  .info {
+    margin-top:12px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  /* RIGHT: shop / history */
+  .side {
+    background: linear-gradient(180deg,#0f0f0f,#0b0b0b);
+    border-radius:16px;
+    padding:18px;
+    min-height:420px;
+    border:1px solid var(--glass-2);
+  }
+  .panel-title{ font-weight:700; margin-bottom:10px }
+  .case-select { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap }
+  .case-card { background:transparent; border:1px solid var(--glass-2); padding:8px 10px; border-radius:10px; cursor:pointer; }
+  .case-card.active { outline:2px solid #fff; transform:scale(1.02) }
+
+  .history {
+    margin-top:14px;
+    max-height:250px;
+    overflow:auto;
+    padding-right:8px;
+  }
+  .hist-item {
+    padding:8px;
+    border-bottom:1px dashed rgba(255,255,255,0.03);
+    display:flex;justify-content:space-between;gap:10px;
+    align-items:center;font-size:13px;
+  }
+  .hist-item .result { font-weight:700 }
+
+  /* star drop animation */
+  .star {
+    position:fixed;
+    pointer-events:none;
+    z-index:2000;
+    transform: translateY(-30px) rotate(0deg);
+    opacity:0;
+    animation: drop 1200ms ease forwards;
+  }
+  @keyframes drop {
+    0% { opacity:0; transform: translateY(-30px) scale(.4) rotate(-20deg) }
+    30% { opacity:1; transform: translateY(20px) scale(1.1) rotate(10deg) }
+    100% { opacity:1; transform: translateY(220px) scale(1) rotate(360deg) }
+  }
+
+  /* result modal */
+  .result-popup{
+    position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(.95);
+    background:linear-gradient(180deg,#111,#0c0c0c);
+    padding:18px 22px; border-radius:14px; border:1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7); display:none; z-index:3000; text-align:center;
+  }
+  .result-popup.show{ display:block; animation:pop .18s ease forwards; }
+  @keyframes pop{ to { transform:translate(-50%,-50%) scale(1) } }
+
+  .big-star { font-size:48px; font-weight:900; margin-bottom:8px; }
+  .res-name { color:var(--muted); margin-bottom:6px }
+
+  /* responsiveness */
+  @media (max-width:920px){
+    .app{ grid-template-columns:1fr; padding:12px }
+    .side{ order:-1 }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- LEFT -->
+  <div class="case-area">
+    <div class="header">
+      <div>
+        <div class="title">Кейсы MonoGrad</div>
+        <div class="sub">Крути кейсы и выбивай звезды — мини-игра для бота</div>
+      </div>
+      <div>
+        <div style="text-align:right">
+          <div style="font-weight:700">Баланс</div>
+          <div style="color:var(--muted);font-size:13px" id="balance">500 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage -->
+    <div class="stage" id="stage">
+      <div class="strip" id="strip">
+        <!-- items will be inserted by JS -->
+      </div>
+      <div class="pointer" aria-hidden="true"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="openBtn">Открыть кейс — 99₽</button>
+      <button class="btn secondary" id="fastBtn">Быстрый спин</button>
+      <div style="margin-left:auto" class="info" id="spinInfo">Шанс 5★: 5% • 4★: 15% • 3★: 30% • 2★: 25% • 1★: 25%</div>
+    </div>
+
+    <div class="info" style="margin-top:10px">
+      Игра симулятор — результаты генерируются локально. Для интеграции с ботом используй webhook в настройках.
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="side">
+    <div class="panel-title">Выберите кейс</div>
+    <div class="case-select" id="caseSelect">
+      <!-- JS fills -->
+    </div>
+
+    <div class="panel-title" style="margin-top:12px">История выпадений</div>
+    <div class="history" id="history"></div>
+
+    <div style="margin-top:14px" class="panel-title">Настройки / Webhook</div>
+    <div style="font-size:13px; color:var(--muted); margin-bottom:8px">
+      Вставь URL, на который отправлять результат (POST JSON).
+    </div>
+    <input id="webhook" placeholder="https://your.bot/webhook" style="width:100%; padding:8px; border-radius:8px; border:none; margin-bottom:8px">
+    <div style="display:flex; gap:8px">
+      <button class="btn" id="saveWebhook">Сохранить</button>
+      <button class="btn secondary" id="clearHistory">Очистить историю</button>
+    </div>
+  </div>
+</div>
+
+<!-- result popup -->
+<div id="resultPopup" class="result-popup" role="dialog" aria-modal="true">
+  <div class="big-star" id="popupStar">★</div>
+  <div class="res-name" id="popupName">5-Звёздная звезда</div>
+  <div style="margin-top:6px">
+    <button class="btn" id="popupOkay">ОК</button>
+  </div>
+</div>
+
+<script>
+/* =========================
+   CONFIG: cases & probabilities
+   ========================= */
+const CASES = [
+  {
+    id:'classic',
+    title:'Classic Case',
+    price: 99,
+    items:[
+      {name:'1★ Common Star', stars:1, weight:25},
+      {name:'2★ Uncommon Star', stars:2, weight:25},
+      {name:'3★ Rare Star', stars:3, weight:30},
+      {name:'4★ Epic Star', stars:4, weight:15},
+      {name:'5★ Legendary Star', stars:5, weight:5},
+    ]
+  },
+  {
+    id:'elite',
+    title:'Elite Case',
+    price: 199,
+    items:[
+      {name:'1★ Common Star', stars:1, weight:20},
+      {name:'2★ Uncommon Star', stars:2, weight:25},
+      {name:'3★ Rare Star', stars:3, weight:30},
+      {name:'4★ Epic Star', stars:4, weight:15},
+      {name:'5★ Legendary Star', stars:5, weight:10},
+    ]
+  }
+];
+
+/* =========================
+   State
+   ========================= */
+let selectedCase = CASES[0];
+let balance = 500; // starting balance
+const history = []; // local history
+let webhookUrl = ''; // user may save a webhook
+
+/* =========================
+   DOM refs
+   ========================= */
+const stripEl = document.getElementById('strip');
+const stageEl = document.getElementById('stage');
+const openBtn = document.getElementById('openBtn');
+const fastBtn = document.getElementById('fastBtn');
+const balanceEl = document.getElementById('balance');
+const caseSelectEl = document.getElementById('caseSelect');
+const historyEl = document.getElementById('history');
+const spinInfoEl = document.getElementById('spinInfo');
+const webhookInput = document.getElementById('webhook');
+const saveWebhookBtn = document.getElementById('saveWebhook');
+const clearHistoryBtn = document.getElementById('clearHistory');
+
+const resultPopup = document.getElementById('resultPopup');
+const popupStar = document.getElementById('popupStar');
+const popupName = document.getElementById('popupName');
+const popupOkay = document.getElementById('popupOkay');
+
+/* =========================
+   Helpers
+   ========================= */
+function fmtChance(caseObj){
+  const totals = {};
+  let sum = caseObj.items.reduce((s,i)=>s+i.weight,0);
+  caseObj.items.forEach(i=>{
+    totals[i.stars] = Math.round((i.weight/sum)*100);
+  });
+  return `Шанс 5★: ${totals[5]||0}% • 4★: ${totals[4]||0}% • 3★: ${totals[3]||0}% • 2★: ${totals[2]||0}% • 1★: ${totals[1]||0}%`;
+}
+
+function weightedPick(items){
+  const total = items.reduce((s,i)=>s+i.weight,0);
+  let rnd = Math.random()*total;
+  for(let it of items){
+    if (rnd < it.weight) return it;
+    rnd -= it.weight;
+  }
+  return items[items.length-1];
+}
+
+/* =========================
+   Render UI
+   ========================= */
+function renderCaseSelect(){
+  caseSelectEl.innerHTML = '';
+  CASES.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className = 'case-card' + (c.id===selectedCase.id ? ' active':'');
+    btn.innerText = c.title;
+    btn.onclick = ()=> { selectCase(c.id) };
+    caseSelectEl.appendChild(btn);
+  });
+}
+
+function selectCase(id){
+  selectedCase = CASES.find(c=>c.id===id);
+  renderCaseSelect();
+  spinInfoEl.innerText = fmtChance(selectedCase);
+  openBtn.innerText = `Открыть кейс — ${selectedCase.price}₽`;
+}
+
+/* prepare strip with many items (looped) */
+function buildStrip(){
+  stripEl.innerHTML = '';
+  // create repeated sequence so strip looks continuous
+  const sequence = [];
+  for(let i=0;i<8;i++){
+    selectedCase.items.forEach(it=> sequence.push(it));
+  }
+  sequence.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'case-item';
+    el.innerHTML = `
+      <div class="star-badge">${'★'.repeat(it.stars)}</div>
+      <div class="item-name">${it.name.replace(/\d★ /,'')}</div>
+    `;
+    stripEl.appendChild(el);
+  });
+  // center align so pointer is in center item
+  stripEl.style.transform = 'translateX(0px)';
+}
+
+/* =========================
+   Spin logic & animation
+   ========================= */
+
+/* open a case with animation */
+let spinning = false;
+function openCase(fast=false){
+  if (spinning) return;
+  if (balance < selectedCase.price){
+    alert('Недостаточно средств');
+    return;
+  }
+  balance -= selectedCase.price;
+  updateBalance();
+
+  spinning = true;
+  openBtn.disabled = true;
+
+  // pick result
+  const result = weightedPick(selectedCase.items);
+  // determine index to stop on (center)
+  const items = Array.from(stripEl.children);
+  // pick random position among items with same stars/name for variability
+  const targetIndices = items.map((el,idx)=>({el,idx}))
+    .filter(x=> x.el.querySelector('.item-name').innerText === result.name.replace(/\d★ /,''))
+    .map(x=>x.idx);
+  const chosenIdx = targetIndices[Math.floor(Math.random()*targetIndices.length)];
+
+  // compute translateX so chosen item lands under pointer (center)
+  const containerWidth = stageEl.clientWidth;
+  const itemEl = items[chosenIdx];
+  const itemRect = itemEl.getBoundingClientRect();
+  const stripRect = stripEl.getBoundingClientRect();
+  const itemCenter = itemRect.left + itemRect.width/2;
+  const stripLeft = stripRect.left;
+  // current center of stage
+  const stageCenter = stageEl.getBoundingClientRect().left + stageEl.clientWidth/2;
+  const currentShift = 0; // we always reset to 0 on buildStrip
+  // target translate so that itemCenter moves to stageCenter:
+  const delta = stageCenter - itemCenter;
+  // add some extra spins
+  const extraSpins = fast ? 0 : (Math.floor(Math.random()*3)+2); // 2-4 extra cycles
+  const itemWidth = itemRect.width + 12; // include gap
+  const totalMove = delta + extraSpins * items.length * itemWidth * -1; // negative move (left)
+  // animate using CSS transform
+  stripEl.style.transition = 'transform ' + (fast ? '0.8s' : '2.4s') + ' cubic-bezier(.2,.9,.3,1)';
+  stripEl.style.transform = `translateX(${totalMove}px)`;
+
+  // after animation finishes -> show result
+  const duration = fast ? 850 : 2400;
+  setTimeout(()=>{
+    // reset strip (rebuild to avoid huge transform)
+    stripEl.style.transition = 'none';
+    buildStrip();
+    // call result handler
+    onResult(result);
+    spinning = false;
+    openBtn.disabled = false;
+  }, duration + 30);
+}
+
+/* result handler */
+function onResult(item){
+  // show popup
+  popupStar.innerText = '★'.repeat(item.stars);
+  popupName.innerText = item.name;
+  resultPopup.classList.add('show');
+
+  // add to history
+  const entry = {
+    time: new Date().toLocaleString(),
+    name: item.name,
+    stars: item.stars
+  };
+  history.unshift(entry);
+  if (history.length>40) history.pop();
+  renderHistory();
+
+  // spawn star visual
+  spawnStars(item.stars);
+
+  // send to webhook if set
+  if (webhookUrl){
+    // send minimal JSON, your bot can parse it
+    fetch(webhookUrl, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        event:'case_open',
+        caseId: selectedCase.id,
+        item: item,
+        time: new Date().toISOString()
+      })
+    }).catch(e=>{
+      console.warn('Webhook send failed', e);
+    });
+  }
+}
+
+/* spawn star DOMs falling from center */
+function spawnStars(count){
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    s.innerHTML = getStarSVG();
+    // randomize X near center
+    const stageRect = stageEl.getBoundingClientRect();
+    const x = stageRect.left + stageRect.width/2 + (Math.random()*160 - 80);
+    s.style.left = `${x}px`;
+    s.style.top = `${stageRect.top + 20}px`;
+    s.style.fontSize = `${20 + Math.random()*28}px`;
+    document.body.appendChild(s);
+    // remove after animation
+    setTimeout(()=> s.remove(), 1400 + i*80);
+  }
+}
+
+/* small svg star to be lightweight */
+function getStarSVG(){
+  return `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.6));">
+    <path d="M12 2.6l2.5 5.1L20 8.1l-4 3.9L17.1 20 12 16.7 6.9 20 8 12l-4-3.9 5.5-0.4L12 2.6z" fill="#FFD54A"/>
+  </svg>`;
+}
+
+/* render history */
+function renderHistory(){
+  historyEl.innerHTML = '';
+  history.forEach(h=>{
+    const el = document.createElement('div');
+    el.className = 'hist-item';
+    el.innerHTML = `<div style="color:var(--muted)">${h.time}</div><div class="result">${h.name}</div>`;
+    historyEl.appendChild(el);
+  });
+}
+
+/* update balance UI */
+function updateBalance(){
+  balanceEl.innerText = `${balance} ₽`;
+}
+
+/* =========================
+   Events & init
+   ========================= */
+openBtn.addEventListener('click', ()=> openCase(false));
+fastBtn.addEventListener('click', ()=> openCase(true));
+popupOkay.addEventListener('click', ()=> resultPopup.classList.remove('show'));
+saveWebhookBtn.addEventListener('click', ()=>{
+  webhookUrl = webhookInput.value.trim();
+  alert(webhookUrl ? 'Webhook сохранён' : 'Webhook очищен');
+});
+clearHistoryBtn.addEventListener('click', ()=> { history.length=0; renderHistory(); });
+
+/* initialize UI */
+renderCaseSelect();
+selectCase(CASES[0].id);
+buildStrip();
+updateBalance();
+renderHistory();
+
+/* Optionally: keyboard open */
+document.addEventListener('keydown', (e)=>{
+  if (e.key === ' '){
+    e.preventDefault();
+    openCase(true);
+  }
+});
+</script>
+</body>
+</html>
