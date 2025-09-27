@@ -1,33 +1,520 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaxiGo 🚖</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CyberSec Hub — Уроки • Программы • Ресурсы</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07101a; --panel:#0b1220; --card:#0f1724; --muted:#98a0b3;
+  --accent:#60a5fa; --accent2:#6ee7b7; --safe:#7ef0a1; --danger:#ff6b6b;
+  --glass: rgba(255,255,255,0.02); --radius:12px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:
+    radial-gradient(800px 300px at 10% 8%, rgba(96,165,250,0.03), transparent),
+    linear-gradient(180deg,#06101a,#07101a);
+  color:#e6eef8;-webkit-font-smoothing:antialiased;padding:18px;
+}
+.container{max-width:1200px;margin:0 auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900;color:#042033;font-size:18px}
+.h-title{line-height:1}
+.h-title h1{margin:0;font-size:20px}
+.h-title p{margin:0;color:var(--muted);font-size:13px}
 
-        * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif;}
-        body {background: linear-gradient(135deg, #0f0f0f, #1e1e1e); color: #fff; display: flex; flex-direction: column; min-height: 100vh; text-align: center;}
+/* nav */
+.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tab-btn{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:700;cursor:pointer}
+.tab-btn.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#042033;border:none;box-shadow:0 8px 26px rgba(96,165,250,0.06)}
 
-        header {background: #111; padding: 20px; font-size: 1.8rem; font-weight: 800; letter-spacing: 1px; color: #ffcc00; box-shadow: 0 4px 20px rgba(0,0,0,0.4);}
-        main {flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; gap: 20px; animation: fadeIn 1s ease forwards;}
-        h1 {font-size: 3rem; font-weight: 800; color: #ffcc00; text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);}
-        p {font-size: 1.2rem; color: #ccc; max-width: 600px;}
-        .btn {display: inline-block; background: #ffcc00; color: #000; font-weight: 700; font-size: 1.2rem; padding: 15px 40px; margin-top: 20px; border-radius: 50px; text-decoration: none; box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease;}
-        .btn:hover {transform: scale(1.05); box-shadow: 0 10px 30px rgba(255, 204, 0, 0.5);}
-        footer {background: #111; padding: 15px; font-size: 0.9rem; color: #888;}
-        @keyframes fadeIn {0% {opacity: 0; transform: translateY(30px);} 100% {opacity: 1; transform: translateY(0);}}
-    </style>
+/* page layout */
+.hero{display:grid;grid-template-columns:1fr 340px;gap:18px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);border-radius:var(--radius);padding:16px;border:1px solid rgba(255,255,255,0.03)}
+.section-title{font-size:18px;color:var(--accent2);font-weight:800}
+.small{font-size:13px;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:12px}
+.app-card{padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:10px;transition:transform .12s}
+.app-card:hover{transform:translateY(-8px)}
+.app-header{display:flex;align-items:center;gap:12px}
+.app-icon{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#12263a,#08121a);display:flex;align-items:center;justify-content:center;font-weight:900}
+.app-title{font-weight:900}
+.meta{color:var(--muted);font-size:13px}
+.badges{display:flex;gap:8px;align-items:center}
+.badge{padding:6px 8px;border-radius:999px;font-weight:800;font-size:12px}
+.badge.safe{background:linear-gradient(90deg, rgba(126,240,161,0.08), rgba(126,240,161,0.02)); color:var(--safe)}
+.badge.warn{background:linear-gradient(90deg, rgba(255,107,107,0.08), rgba(255,107,107,0.02)); color:var(--danger)}
+.actions{display:flex;gap:8px;align-items:center;margin-top:auto}
+.btn{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:700;transition:all .14s}
+.btn.primary{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#042033;border:none}
+
+/* tabs content */
+.content-pane{display:none}
+.content-pane.active{display:block}
+
+/* lessons styling */
+.lesson { margin-top:12px; padding:14px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.02); }
+.lesson h3{margin:0;color:var(--accent2)}
+.lesson p{color:var(--muted)}
+
+/* code block */
+.code {
+  background: #071422;
+  border: 1px solid rgba(255,255,255,0.03);
+  padding:12px;border-radius:8px;color:#bfead7;overflow:auto;font-family:monospace;font-size:13px;margin-top:8px;
+}
+
+/* modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,12,0.6);display:none;align-items:center;justify-content:center;z-index:60}
+.modal{background:#0b1220;border-radius:12px;padding:18px;max-width:900px;width:94%;border:1px solid rgba(255,255,255,0.03)}
+.modal h2{margin:0 0 8px 0}
+.modal p{color:var(--muted)}
+.modal .warning{margin-top:12px;padding:12px;border-radius:8px;background:rgba(255,107,107,0.06);border:1px solid rgba(255,107,107,0.08);color:var(--danger)}
+
+/* right column */
+aside.card{position:sticky;top:18px;height:max-content}
+
+/* responsive */
+@media (max-width:980px){ .hero{grid-template-columns:1fr} .logo{width:52px;height:52px} }
+</style>
 </head>
 <body>
-    <header>🚖 TaxiGo</header>
-    <main>
-        <h1>Вызови такси за 1 клик</h1>
-        <p>TaxiGo — это самый быстрый способ заказать такси в своём городе. 
-           Надёжные водители, комфортные машины и честные цены.</p>
-        <a href="order.html" class="btn">🚗 Заказать сейчас</a>
-    </main>
-    <footer>© 2025 TaxiGo. Все права защищены.</footer>
+<div class="container">
+  <header class="header">
+    <div class="brand">
+      <div class="logo">CS</div>
+      <div class="h-title">
+        <h1>CyberSec Hub</h1>
+        <p class="small">Кибербезопасность • Обучение • Инструменты</p>
+      </div>
+    </div>
+
+    <nav class="nav" aria-label="Навигация">
+      <button class="tab-btn active" data-tab="programs">Программы</button>
+      <button class="tab-btn" data-tab="lessons">Уроки</button>
+      <button class="tab-btn" data-tab="tools">Инструменты</button>
+      <button class="tab-btn" data-tab="downloads">Загрузки</button>
+      <button class="tab-btn" data-tab="about">О проекте</button>
+      <button class="tab-btn" data-tab="contact">Контакты</button>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <!-- main column -->
+    <section>
+      <!-- PROGRAMS -->
+      <div id="programs" class="content-pane active card">
+        <div class="section-title">Программы (витрина)</div>
+        <p class="small" style="margin-top:6px">Короткие описания программ. Кнопки «Подробнее» открывают модалку с демонстрационными файлами и ссылкой на скачивание (демо).</p>
+
+        <div class="grid" style="margin-top:14px">
+          <!-- PAUnlocker -->
+          <article class="app-card">
+            <div class="app-header">
+              <div class="app-icon">PU</div>
+              <div>
+                <div class="app-title">PAUnlocker</div>
+                <div class="meta">Восстановление заблокированных функций Windows (демо/инструмент восстановления).</div>
+              </div>
+            </div>
+            <div class="badges">
+              <span class="badge safe">Восстановление</span>
+              <span class="badge warn">Тестировать в VM</span>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="openDetails('PAUnlocker','PAUnlocker — инструмент восстановления (демо). Перед использованием выполняйте тестирование в изолированной виртуальной машине.','pu_demo.txt')">Подробнее / Скачать</button>
+              <button class="btn" onclick="openLesson('lesson_unblock')">Урок: восстановление</button>
+            </div>
+          </article>
+
+          <!-- PAAntivirus -->
+          <article class="app-card">
+            <div class="app-header">
+              <div class="app-icon">AV</div>
+              <div>
+                <div class="app-title">PAAntivirus</div>
+                <div class="meta">Демонстрационный сканер/отчёт — не удаляет ничего автоматически (демо).</div>
+              </div>
+            </div>
+            <div class="badges"><span class="badge safe">Анализ</span><span class="badge warn">Тестировать в VM</span></div>
+            <div class="actions">
+              <button class="btn primary" onclick="openDetails('PAAntivirus','PAAntivirus — демонстрационный сканер. Используйте в обучающих целях и только в изолированных средах.','pa_antivirus_demo.txt')">Подробнее / Скачать</button>
+              <button class="btn" onclick="openLesson('lesson_analysis')">Урок: анализ</button>
+            </div>
+          </article>
+
+          <!-- PADispetcher -->
+          <article class="app-card">
+            <div class="app-header">
+              <div class="app-icon">PD</div>
+              <div>
+                <div class="app-title">PADispetcher</div>
+                <div class="meta">Диспетчер задач с акцентом на диагностику скрытых майнеров (демо-интерфейс).</div>
+              </div>
+            </div>
+            <div class="badges"><span class="badge safe">Диагностика</span><span class="badge warn">Тестировать в VM</span></div>
+            <div class="actions">
+              <button class="btn primary" onclick="openDetails('PADispetcher','PADispetcher — визуальный диспетчер (демо). Предоставляет примеры вывода и рекомендации по анализу.','pd_demo.txt')">Подробнее / Скачать</button>
+              <button class="btn" onclick="openLesson('lesson_process')">Урок: поиск майнеров</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- LESSONS -->
+      <div id="lessons" class="content-pane card">
+        <div class="section-title">Уроки — Практические руководства</div>
+        <p class="small" style="margin-top:6px">Полные, пошаговые уроки. К каждому уроку — чек-лист и рекомендуемые ресурсы.</p>
+
+        <!-- Lesson 1 -->
+        <div id="lesson_unblock" class="lesson" style="margin-top:12px">
+          <h3>Урок 1 — Восстановление функций Windows (основы)</h3>
+          <p class="meta">Когда пользователю «закрывают» доступ к определённым функциям — важны анализ и восстановление без разрушения данных.</p>
+
+          <ol class="small" style="margin-top:8px;color:var(--muted)">
+            <li>Создайте snapshot в виртуальной машине до любых действий.</li>
+            <li>Соберите артефакты: <code>Autoruns</code> (Sysinternals), журнал событий Windows (Event Viewer), список установленных программ.</li>
+            <li>Проверьте политики локальной безопасности (gpedit.msc) и реестр (HKLM/HKCU) на подозрительные правки.</li>
+            <li>Если обнаружены блокированные ключи/правки — восстанавливайте их через экспорт/импорт реестра и корректные политики, тестируя по шагам.</li>
+            <li>Записывайте все изменения и сохраняйте логи; откат к snapshot — быстрое безопасное восстановление.</li>
+          </ol>
+
+          <div class="code">
+# Пример — как сохранить ветку реестра в Windows (в VM, PowerShell):
+reg export "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies" C:\temp\policies_export.reg
+          </div>
+        </div>
+
+        <!-- Lesson 2 -->
+        <div id="lesson_vm" class="lesson" style="margin-top:14px">
+          <h3>Урок 2 — Настройка виртуальной машины для тестов</h3>
+          <p class="meta">Правильная VM — ключ к безопасному анализу.</p>
+          <ol class="small" style="margin-top:8px;color:var(--muted)">
+            <li>Выберите гипервизор: VirtualBox (бесплатно) или VMware Workstation.</li>
+            <li>Сеть: используйте NAT или полностью отключённую сеть. При необходимости используйте изолированный NAT и отдельный шлюз для анализа трафика.</li>
+            <li>Проставьте снапшоты: <strong>до</strong> и <strong>после</strong> анализа.</li>
+            <li>Отключите совместное использование папок/буфера обмена с хостом.</li>
+            <li>Используйте инструмент для захвата трафика в отдельной машине (например, отдельный Wireshark с зеркалированием).</li>
+          </ol>
+          <div class="code">
+# Пример: в VirtualBox выключить Shared Clipboard и Drag'n'Drop (интерфейс VM)
+# В VMware — отключить Shared Folders и ограничить сеть в настройках VM.
+          </div>
+        </div>
+
+        <!-- Lesson 3 -->
+        <div id="lesson_process" class="lesson" style="margin-top:14px">
+          <h3>Урок 3 — Анализ процессов и поиск скрытых майнеров</h3>
+          <p class="meta">Как обнаружить майнеры и скрытые процессы.</p>
+          <ol class="small" style="margin-top:8px;color:var(--muted)">
+            <li>Соберите список процессов: `tasklist` / Process Explorer (Sysinternals).</li>
+            <li>Проверьте автозагрузки: Autoruns.</li>
+            <li>Контроль сетевой активности: `netstat -ano` и захват трафика (Wireshark) – аномалии в long-lived соединениях и высоких отправках.</li>
+            <li>Проверяйте подписи бинарников и хеши (SHA256) — незнакомые файлы исследуйте в изолированной среде.</li>
+            <li>Если нужно — снимите дамп процесса и анализируйте в безопасной среде оффлайн.</li>
+          </ol>
+          <div class="code">
+# Windows:
+tasklist /v
+netstat -ano | findstr ESTABLISHED
+# Используйте Process Explorer для деталей процесса и подписи.
+          </div>
+        </div>
+
+        <!-- Lesson 4 -->
+        <div id="lesson_logs" class="lesson" style="margin-top:14px">
+          <h3>Урок 4 — Работа с логами и безопасный анализ файлов</h3>
+          <p class="meta">Сбор и анализ логов — ключ к пониманию инцидента.</p>
+          <ol class="small" style="margin-top:8px;color:var(--muted)">
+            <li>Собирайте Event Logs (Application, System, Security) и анализируйте временные коридоры инцидента.</li>
+            <li>Используйте YARA (локальные правила) для обнаружения известных строк/паттернов.</li>
+            <li>Для бинарей используйте статический анализ (strings, binwalk) и динамический — в изолированной VM.</li>
+            <li>Документируйте каждое действие: время, команды, результаты — пригодится для отчёта.</li>
+          </ol>
+          <div class="code">
+# Пример: экспорт логов Windows
+wevtutil epl Application application.evtx
+wevtutil epl System system.evtx
+          </div>
+        </div>
+
+        <!-- Lesson 5 -->
+        <div id="lesson_sandbox" class="lesson" style="margin-top:14px">
+          <h3>Урок 5 — Создание безопасной песочницы для тестов</h3>
+          <p class="meta">Как собрать минимальную песочницу для ручного анализа.</p>
+          <ol class="small" style="margin-top:8px;color:var(--muted)">
+            <li>Отдельная сеть, отдельная VM; используйте NAT или полностью отключённый интернет.</li>
+            <li>Запускайте подозрительные файлы в снапшотной VM; снимайте дампы и сетевые логи.</li>
+            <li>Ограничьте ресурсы VM (CPU/RAM), чтобы предотвратить влияние на хост.</li>
+            <li>Обязательно тестируйте только с явного разрешения владельца данных/системы.</li>
+          </ol>
+        </div>
+
+      </div>
+
+      <!-- TOOLS -->
+      <div id="tools" class="content-pane card">
+        <div class="section-title">Инструменты и утилиты</div>
+        <p class="small" style="margin-top:6px">Описание рекомендованных инструментов (демо‑описания):</p>
+
+        <div class="grid" style="margin-top:12px">
+          <article class="app-card">
+            <h3>Autoruns (Sysinternals)</h3>
+            <p class="meta">Просмотр автозагрузок и автозапусков в системе — ключевой инструмент при расследовании.</p>
+            <div class="actions"><button class="btn primary" onclick="openDetails('Autoruns','Autoruns — инструмент Sysinternals для анализа автозагрузок (ссылка на официальный ресурс).','autoruns_demo.txt')">Подробнее</button></div>
+          </article>
+
+          <article class="app-card">
+            <h3>Process Explorer</h3>
+            <p class="meta">Углублённый просмотр процессов, подписи, дескрипторов и сетевой активности.</p>
+            <div class="actions"><button class="btn primary" onclick="openDetails('Process Explorer','Process Explorer — детальный мониторинг процессов (демо‑описание).','procexp_demo.txt')">Подробнее</button></div>
+          </article>
+        </div>
+      </div>
+
+      <!-- DOWNLOADS -->
+      <div id="downloads" class="content-pane card">
+        <div class="section-title">Центр загрузок (демо)</div>
+        <p class="small" style="margin-top:6px">Демо‑файлы — безопасный контент. Перед скачиванием обязательно подтвердите VM.</p>
+
+        <div class="grid" style="margin-top:12px">
+          <article class="app-card">
+            <h3>PAUnlocker — demo.txt</h3>
+            <p class="meta">Текстовая заглушка для PAUnlocker (безопасный контент).</p>
+            <div class="actions">
+              <label style="display:flex;align-items:center;gap:8px"><input id="confirm_vm_download" type="checkbox"> Я тестирую только в VM</label>
+              <a class="btn primary" href="#" onclick="safeDownload(event,'pu_demo.txt')">Скачать demo</a>
+            </div>
+          </article>
+
+          <article class="app-card">
+            <h3>PAAntivirus — demo.txt</h3>
+            <p class="meta">Текстовая заглушка-отчёт (безопасно).</p>
+            <div class="actions">
+              <label style="display:flex;align-items:center;gap:8px"><input id="confirm_vm_download2" type="checkbox"> Я тестирую только в VM</label>
+              <a class="btn primary" href="#" onclick="safeDownload(event,'pa_antivirus_demo.txt')">Скачать demo</a>
+            </div>
+          </article>
+
+          <article class="app-card">
+            <h3>PADispetcher — demo.txt</h3>
+            <p class="meta">Текстовая заглушка (демо).</p>
+            <div class="actions">
+              <label style="display:flex;align-items:center;gap:8px"><input id="confirm_vm_download3" type="checkbox"> Я тестирую только в VM</label>
+              <a class="btn primary" href="#" onclick="safeDownload(event,'pd_demo.txt')">Скачать demo</a>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div id="about" class="content-pane card">
+        <div class="section-title">О проекте</div>
+        <p class="small" style="margin-top:6px">CyberSec Hub — образовательная витрина. Цель: безопасное обучение методам анализа и восстановлению систем.</p>
+
+        <div style="margin-top:12px" class="small">
+          <strong>Политика безопасности:</strong>
+          <ul>
+            <li>На сайте — только демонстрационные файлы и учебные материалы.</li>
+            <li>Реальное тестирование — только в изолированных виртуальных средах и с письменного согласия владельца.</li>
+            <li>Я не размещаю и не помогаю распространять вредоносный код.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div id="contact" class="content-pane card">
+        <div class="section-title">Контакты</div>
+        <p class="small" style="margin-top:6px">По вопросам обучения и сотрудничества: <strong>contact@cybersec.example</strong></p>
+
+        <div style="margin-top:12px" class="card">
+          <h3>Оставить заметку (локально)</h3>
+          <p class="small">Заметки сохраняются в локальном хранилище браузера и не отправляются.</p>
+          <textarea id="note" rows="5" style="width:100%;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;padding:8px;border-radius:8px"></textarea>
+          <div style="margin-top:8px;display:flex;justify-content:flex-end">
+            <button class="btn primary" onclick="saveNote()">Сохранить заметку</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- right column -->
+    <aside class="card">
+      <div class="section-title">Быстрые ссылки</div>
+      <div style="margin-top:10px" class="small">
+        <ul>
+          <li><a href="#programs" style="color:var(--accent2)">Программы</a></li>
+          <li><a href="#lessons" style="color:var(--accent2)">Уроки</a></li>
+          <li><a href="#downloads" style="color:var(--accent2)">Загрузки</a></li>
+          <li><a href="#about" style="color:var(--accent2)">О проекте</a></li>
+        </ul>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="section-title">Важное предупреждение</div>
+        <div style="margin-top:10px" class="modal warning">
+          <strong>Внимание:</strong>
+          <p class="meta">Если вы собираетесь тестировать потенциально опасные артефакты — делайте это только в изолированной VM, используйте снапшоты и снимайте логи. Этот сайт предоставляет только безопасные демо‑файлы.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <div class="section-title">Чек-лист безопасности</div>
+        <ol class="small" style="margin-top:8px;color:var(--muted)">
+          <li>VM с отключённым Shared Folders и буфером обмена.</li>
+          <li>Снапшот/снимок системы до теста.</li>
+          <li>Сбор логов и экспорт артефактов.</li>
+          <li>Откат и удаление VM после теста (если нужно).</li>
+        </ol>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Details modal -->
+<div class="modal-backdrop" id="detailsModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 id="detailsTitle"></h2>
+    <p id="detailsText"></p>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" onclick="closeDetails()">Закрыть</button>
+      <a id="detailsDownload" class="btn primary" href="#" onclick="confirmDownload(event)">Скачать demo-файл</a>
+    </div>
+    <p class="small" style="margin-top:10px;color:var(--muted)">Файлы — демонстрационные текстовые заглушки. Заменять содержимое можно локально.</p>
+  </div>
+</div>
+
+<script>
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.content-pane').forEach(p=>p.classList.remove('active'));
+    const pane = document.getElementById(tab);
+    if(pane) pane.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ---------- Demo files (safe text) ---------- */
+const DEMOS = {
+  'pu_demo.txt': `PAUnlocker — demo file
+Описание и инструкции (демо). Здесь можно хранить base64 или пояснения, но НЕ реальный исполняемый код.`,
+  'pa_antivirus_demo.txt': `PAAntivirus — demo file
+Структура отчёта (демо). Безопасный текст.`,
+  'pd_demo.txt': `PADispetcher — demo file
+Пример вывода диспетчера (демо).`,
+  'autoruns_demo.txt': `Autoruns — demo info
+Описание использования Autoruns (демо).`,
+  'procexp_demo.txt': `Process Explorer — demo info
+Описание и советы по использованию (демо).`
+};
+
+/* helper to create a downloadable blob URL for a demo file */
+function getDemoUrl(name) {
+  const txt = DEMOS[name] || 'Demo file';
+  const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+  return URL.createObjectURL(blob);
+}
+
+/* ---------- Details modal ---------- */
+function openDetails(title, text, demoName) {
+  document.getElementById('detailsTitle').innerText = title;
+  document.getElementById('detailsText').innerText = text;
+  const dl = document.getElementById('detailsDownload');
+  dl.href = getDemoUrl(demoName);
+  dl.dataset.name = demoName;
+  document.getElementById('detailsModal').style.display = 'flex';
+}
+function closeDetails(){ document.getElementById('detailsModal').style.display = 'none'; }
+
+/* ---------- Safe download (requires VM checkbox) ---------- */
+function safeDownload(ev, demoName) {
+  ev.preventDefault();
+  // determine which download checkbox applies (search nearby)
+  // For downloads tab we have explicit checkboxes with ids confirm_vm_download*
+  let ok = false;
+  if(ev.target && ev.target.closest) {
+    // try to find a checkbox in parent app-card
+    const card = ev.target.closest('.app-card');
+    if(card) {
+      const cb = card.querySelector('input[type="checkbox"]');
+      if(cb) ok = cb.checked;
+    }
+  }
+  // fallback: check downloads tab checkboxes by ids
+  if(!ok) {
+    ok = document.getElementById('confirm_vm_download')?.checked ||
+         document.getElementById('confirm_vm_download2')?.checked ||
+         document.getElementById('confirm_vm_download3')?.checked;
+  }
+  if(!ok){
+    alert('Пожалуйста, подтвердите, что вы будете тестировать только в изолированной виртуальной машине (установите чекбокс).');
+    return;
+  }
+  const url = getDemoUrl(demoName);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = demoName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 30000);
+}
+
+/* confirm download from modal (requires any of the downloads checkboxes) */
+function confirmDownload(ev){
+  ev.preventDefault();
+  const ok = document.getElementById('confirm_vm_download')?.checked ||
+             document.getElementById('confirm_vm_download2')?.checked ||
+             document.getElementById('confirm_vm_download3')?.checked;
+  if(!ok){ alert('Поставьте галочку в разделе "Загрузки" — вы будете тестировать только в VM.'); return; }
+  const demoName = ev.target.dataset.name;
+  const url = getDemoUrl(demoName);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = demoName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  closeDetails();
+}
+
+/* ---------- Lessons shortcuts (scroll to lesson) ---------- */
+function openLesson(id){
+  // switch to lessons tab
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="lessons"]').classList.add('active');
+  document.querySelectorAll('.content-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('lessons').classList.add('active');
+  // scroll to element if exists
+  const el = document.getElementById(id) || document.getElementById('lessons');
+  if(el) el.scrollIntoView({behavior:'smooth'});
+  alert('Открылся раздел «Уроки» — прокрутитесь до нужного урока.');
+}
+
+/* ---------- Notes saving (local only) ---------- */
+function saveNote(){
+  const txt = document.getElementById('note').value;
+  if(!txt.trim()){ alert('Заметка пустая'); return; }
+  localStorage.setItem('cybersec_note', txt);
+  alert('Заметка сохранена локально.');
+}
+window.addEventListener('load', ()=>{
+  const note = localStorage.getItem('cybersec_note');
+  if(note) document.getElementById('note').value = note;
+});
+
+/* close modal on backdrop click */
+document.getElementById('detailsModal').addEventListener('click', (e)=>{ if(e.target===document.getElementById('detailsModal')) closeDetails(); });
+</script>
 </body>
 </html>
